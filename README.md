@@ -8,13 +8,11 @@ ingressos e gerenciar o perfil do usuário.
 
 ## Integrantes
 
-| Nome | RA / Matrícula |
-|------|----------------|
-| Cesar Filipe Gomes | _preencher_ |
-| _preencher_ | _preencher_ |
-| _preencher_ | _preencher_ |
-
-> Substitua os campos `_preencher_` com os nomes e matrículas do grupo.
+- César Filipe Gomes da Silva
+- Lucas Ferreira Lan
+- Herick Marcio
+- Juary Júnio
+- Rodrigo Souza Guimarães
 
 ---
 
