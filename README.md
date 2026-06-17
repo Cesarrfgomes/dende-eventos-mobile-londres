@@ -1,84 +1,140 @@
-# Dendê Eventos — App Mobile (React Native + Expo)
+# Dendê Eventos — App Mobile
 
-Aplicativo mobile que consome a **API REST Dendê Eventos** (módulo *londres*),
-implementando o fluxo do **usuário comum**: descobrir eventos, comprar e cancelar
-ingressos e gerenciar o perfil.
+Aplicativo mobile desenvolvido em **React Native + Expo** que consome a
+**API REST Dendê Eventos**, permitindo descobrir eventos, comprar e cancelar
+ingressos e gerenciar o perfil do usuário.
 
-Desenvolvido a partir do [`HANDOFF_MOBILE.md`](./HANDOFF_MOBILE.md).
+---
 
-## Requisitos
+## Integrantes
 
-- **Node ≥ 20** (Expo SDK 54). Se usar nvm: `nvm use 20`.
-- Expo Go compatível com **SDK 54**.
+| Nome | RA / Matrícula |
+|------|----------------|
+| Cesar Filipe Gomes | _preencher_ |
+| _preencher_ | _preencher_ |
+| _preencher_ | _preencher_ |
 
-## Como rodar
+> Substitua os campos `_preencher_` com os nomes e matrículas do grupo.
+
+---
+
+## Problema resolvido
+
+A compra e o acompanhamento de ingressos para eventos costumam ser processos
+fragmentados: o usuário precisa procurar informações em vários canais, não tem
+uma visão clara dos eventos disponíveis e tem dificuldade para gerenciar os
+ingressos que já adquiriu.
+
+O **Dendê Eventos** centraliza toda essa jornada em um único aplicativo mobile:
+
+- Lista os eventos ativos de forma organizada e atualizada;
+- Permite **comprar ingressos** em poucos toques, com tratamento de eventos
+  esgotados ou inativos;
+- Reúne em um só lugar os ingressos **ativos e cancelados**, com cancelamento
+  simplificado;
+- Dá ao usuário controle total sobre seu **cadastro e perfil**.
+
+---
+
+## Público-alvo
+
+**Participantes de eventos** — pessoas que querem descobrir, comprar e gerenciar
+ingressos de forma rápida pelo celular, sem depender de bilheterias físicas ou
+de múltiplos sites.
+
+O escopo atual implementa o **perfil de usuário comum**. A arquitetura foi
+pensada para, futuramente, atender também o **perfil organizador** (criação e
+gestão de eventos), reaproveitando a mesma base de código.
+
+---
+
+## Tecnologias utilizadas
+
+| Camada | Tecnologia |
+|--------|-----------|
+| Framework | React Native 0.81 + Expo SDK 54 |
+| Linguagem | JavaScript (React 19) |
+| Navegação | React Navigation (Native Stack + Bottom Tabs) |
+| Gerenciamento de estado | Context API + Hooks (`useState` / `useEffect`) |
+| Consumo de API | Axios (instância central + interceptors) |
+| Persistência local | AsyncStorage |
+| Formulários | Validação própria (`src/utils/validation.js`) |
+
+---
+
+## Estrutura do projeto
+
+```
+App.js                       # provider de auth + safe area + navegação
+app.json                     # configuração do Expo (inclui apiBaseUrl)
+index.js                     # ponto de entrada
+src/
+  api/                       # client axios + um módulo por recurso
+    client.js                # baseURL configurável + tratamento do ExceptioDTO
+    eventos.js
+    ingressos.js
+    usuarios.js
+  components/                # UI reutilizável (Button, Input, Cards, Badge, etc.)
+  context/
+    AuthContext.js           # sessão do usuário + persistência em AsyncStorage
+  navigation/
+    RootNavigator.js         # decide entre fluxo de auth e app logado
+    AppTabs.js               # abas inferiores do app
+  screens/                   # as 6 telas
+    LoginScreen.js
+    CadastroScreen.js
+    FeedScreen.js
+    EventoDetalheScreen.js
+    MeusIngressosScreen.js
+    PerfilScreen.js
+  theme/                     # cores, espaçamentos e raios
+  utils/                     # formatação de datas/moeda e validações
+```
+
+---
+
+## Como executar
+
+### Pré-requisitos
+
+- **Node.js ≥ 20** (Expo SDK 54). Com nvm: `nvm use 20`.
+- App **Expo Go** (compatível com SDK 54) no celular, ou um emulador
+  Android / simulador iOS.
+
+### Passos
 
 ```bash
-# 1. Instalar dependências
+# 1. Instalar as dependências
 npm install
 
 # 2. Subir a API (no projeto do backend)
-#    docker compose up -d  &&  ./gradlew bootRun   -> http://localhost:3333
+#    docker compose up -d  &&  ./gradlew bootRun   ->  http://localhost:3333
 
 # 3. Apontar o app para a API: edite app.json -> expo.extra.apiBaseUrl
-#    Emulador Android: http://10.0.2.2:3333
-#    Simulador iOS:    http://localhost:3333
+#    Emulador Android:   http://10.0.2.2:3333
+#    Simulador iOS:      http://localhost:3333
 #    Dispositivo físico: http://<IP-da-sua-maquina>:3333
 
 # 4. Iniciar o Expo
-npm start          # depois pressione "a" (Android) ou "i" (iOS), ou leia o QR no Expo Go
+npm start
 ```
 
-## Como os requisitos obrigatórios foram atendidos
+Depois de iniciar, pressione:
 
-| Requisito | Onde |
-|-----------|------|
-| **1. Navegação estruturada** | Stack (auth) + Bottom Tabs + Stack aninhada no Feed — `src/navigation/` |
-| **2. Mínimo de 5 telas** | Login, Cadastro, Feed, Detalhe do Evento, Meus Ingressos, Perfil (6) — `src/screens/` |
-| **3. Gerenciamento de estado** | `useState`/`useEffect` em todas as telas + Context API (`AuthContext`) |
-| **4. Consumo de API REST** | Axios com instância central e interceptors — `src/api/` |
-| **5. Persistência local** | `AsyncStorage` guarda a sessão do usuário — `src/context/AuthContext.js` |
-| **6. Formulários com validação** | Login, Cadastro e Edição de perfil — `src/utils/validation.js` |
+- **`a`** para abrir no Android;
+- **`i`** para abrir no iOS;
+- ou leia o **QR Code** com o app **Expo Go** no celular.
 
-## Estrutura
-
-```
-App.js                     # provider de auth + safe area + navegação
-src/
-  api/                     # client axios + um módulo por recurso
-    client.js              # baseURL configurável + tratamento do ExceptioDTO
-    eventos.js · ingressos.js · usuarios.js
-  components/               # UI reutilizável (Button, Input, Cards, Badge, estados)
-  context/AuthContext.js    # "sessão" + persistência em AsyncStorage
-  navigation/               # RootNavigator (auth vs app) + AppTabs
-  screens/                  # as 6 telas
-  theme/                    # cores, espaçamentos, raios
-  utils/                    # formatação de datas/moeda e validações
-```
+---
 
 ## Telas e funcionalidades
 
-- **Login** — "login" por e-mail (a API ainda não tem token; ver seção 7 do handoff).
+- **Login** — entrada por e-mail (a API ainda não tem token; ver handoff).
 - **Cadastro** — formulário validado; ao concluir, entra direto no app.
-- **Feed** — lista de eventos ativos (`GET /eventos`), pull-to-refresh, estados de
-  carregamento/erro/vazio.
+- **Feed** — lista de eventos ativos (`GET /eventos`), com *pull-to-refresh* e
+  estados de carregamento/erro/vazio.
 - **Detalhe do evento** — todos os dados, aviso de "ingresso casado" e compra
-  (`POST /ingressos`), com tratamento de capacidade esgotada / evento inativo (409).
+  (`POST /ingressos`), tratando capacidade esgotada / evento inativo (409).
 - **Meus Ingressos** — `SectionList` separando ativos de cancelados/finalizados;
   cancelamento com confirmação (`PATCH /ingressos/{id}/cancelar`).
 - **Perfil** — ver/editar dados (`PUT`) e desativar conta (`DELETE` soft) + sair.
-
-## Observações de arquitetura
-
-- **Autenticação isolada** no `AuthContext`: quando o backend adicionar login com JWT
-  (seção 7 do handoff), só este arquivo e a camada `api/` mudam — as telas não.
-- **Datas**: a API usa `LocalDateTime` sem timezone; `parseLocalDateTime` trata como
-  horário local para evitar deslocamento de UTC.
-- **Erros**: o interceptor converte o `ExceptioDTO` (`{ status, mensagem }`) em
-  mensagens amigáveis exibidas nas telas.
-
-## Escopo
-
-Implementado o **perfil usuário comum** (MVP recomendado no handoff). O perfil
-*organizador* (criar/editar/ativar eventos) está fora deste escopo e pode ser
-adicionado reaproveitando a mesma estrutura de `api/`, `navigation/` e `screens/`.
